@@ -12,11 +12,14 @@ export default function HelmetModel() {
   useEffect(() => {
     if (!helmetModel) return;
 
-    // Add the helmet to the scene.
     scene.add(helmetModel.scene);
-    helmetModel.scene.position.set(0, 0, 0);
 
-    // Set up rotation animation for the helmet.
+    helmetModel.scene.position.set(
+      62.57204055786133,
+      1.6807150840759277,
+      -15.610681533813477
+    );
+
     let frameId: number;
     const animateHelmet = () => {
       helmetModel.scene.rotation.y += 0.005;

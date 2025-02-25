@@ -5,13 +5,10 @@ export default function Home() {
     <div className="flex flex-col gap-20 min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col flex-1 gap-8 w-full max-w-4xl mx-auto row-start-2">
         <div className="w-full aspect-[16/9]">
-          {/* <AssetsProvider> */}
           <MatterportView
             sdkKey={process.env.PUBLIC_MATTERPORT_SDK_KEY ?? ""}
             modelId={process.env.PUBLIC_MATTERPORT_MODEL_ID ?? ""}
           />
-          {/* <LoadedScene /> */}
-          {/* </AssetsProvider> */}
         </div>
 
         <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
