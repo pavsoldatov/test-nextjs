@@ -5,6 +5,8 @@ import { MatterportProvider } from "@/context/MatterportContext";
 import { Helmet } from "./models/Helmet";
 import { DirectionalLight, PointLight } from "./lights";
 import { SceneStarter } from "./SceneStarter";
+import { Tag } from "./tags/Tag";
+import { NavigationMenu } from "./NavigationMenu";
 
 interface MatterportViewProps {
   sdkKey: string;
@@ -17,6 +19,7 @@ const MatterportView: FC<MatterportViewProps> = ({ sdkKey, modelId }) => {
 
   return (
     <>
+      <NavigationMenu />
       <iframe
         ref={iframeRef}
         className="w-full h-full"
@@ -41,6 +44,13 @@ const MatterportView: FC<MatterportViewProps> = ({ sdkKey, modelId }) => {
           position={{ x: 62.572, y: 1.6, z: -15.61 }}
           lookAt={{ x: 57.89955, y: 1.65994, z: -13.69026 }}
           scale={0.5}
+        />
+        <Tag
+          label="Office"
+          description="This is an important tag representing an office room."
+          anchorPosition={{ x: 58.9179, y: 0, z: -16.05324 }}
+          stemVector={{ x: 0, y: 1.5, z: 0 }}
+          color={{ r: 1, g: 0, b: 0 }}
         />
         <SceneStarter />
       </MatterportProvider>
