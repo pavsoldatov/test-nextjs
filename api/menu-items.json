@@ -1,0 +1,26 @@
+[
+  {
+    "id": "teleport-office",
+    "label": "Teleport to Office",
+    "action": "teleport",
+    "target": "Office"
+  },
+  {
+    "id": "navigate-office",
+    "label": "Navigate to Office",
+    "action": "navigate",
+    "target": "Office"
+  },
+  {
+    "id": "teleport-lobby",
+    "label": "Teleport to Lobby",
+    "action": "teleport",
+    "target": "Lobby"
+  },
+  {
+    "id": "navigate-lobby",
+    "label": "Navigate to Lobby",
+    "action": "navigate",
+    "target": "Lobby"
+  }
+]
