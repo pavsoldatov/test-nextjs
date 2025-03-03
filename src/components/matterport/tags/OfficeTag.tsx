@@ -13,7 +13,7 @@ type MatterportTagProps = {
   stemVisible?: boolean;
 };
 
-export const Tag: FC<MatterportTagProps> = ({
+export const OfficeTag: FC<MatterportTagProps> = ({
   label,
   description = "",
   anchorPosition,

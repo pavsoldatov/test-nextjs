@@ -5,6 +5,8 @@ export type MenuItem = {
   label: string;
   action: "teleport" | "navigate";
   target: string;
+  sweepId: string;
+  cameraRotation: { x: number; y: number };
 };
 
 export function useMenuItems() {

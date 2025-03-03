@@ -3,7 +3,9 @@
     "id": "teleport-office",
     "label": "Teleport to Office",
     "action": "teleport",
-    "target": "Office"
+    "target": "Office",
+    "sweepId": "f76u4w0s34mxmnt6ae9z8nq3d",
+    "cameraRotation": { "x": -2.388841, "y": -52.785242 }
   },
   {
     "id": "navigate-office",
