@@ -6,6 +6,7 @@ import { MenuItem, useMenuItems } from "@/hooks/useMenuItems";
 import { useMatterport } from "@/context/MatterportContext";
 import { MenuButton } from "./MenuButton";
 import { LocationsList } from "./LocationsList";
+import { useSweepNavigation } from "@/hooks/useSweepNavigation";
 
 interface NavigationMenuProps {
   className?: string;
@@ -14,12 +15,14 @@ interface NavigationMenuProps {
 export const NavigationMenu: FC<NavigationMenuProps> = ({ className = "" }) => {
   const { sdk, isConnected } = useMatterport();
   const { menuItems, isLoading, error } = useMenuItems();
+  const { navigateToSweep } = useSweepNavigation();
   const [open, setOpen] = useState(false);
 
   const handleMenuItemClick = async (item: MenuItem) => {
+    setOpen(false);
+
     if (!sdk) {
       console.error("SDK not available");
-      setOpen(false);
       return;
     }
 
@@ -30,11 +33,22 @@ export const NavigationMenu: FC<NavigationMenuProps> = ({ className = "" }) => {
           transition: sdk.Sweep.Transition.FADEOUT,
         });
       }
+      if (item.action === "navigate") {
+        await navigateToSweep(item.sweepId, {
+          transitionType: sdk.Sweep.Transition.FLY,
+          transitionTime: 1000,
+          stepDelay: 800,
+          rotationOffset: 172.48,
+          pathWeightExponent: 3,
+          finalRotation: item.cameraRotation,
+        });
+      }
     } catch (error) {
-      console.error(`Error ${item.action}ing to ${item.target}:`, error);
+      console.error(
+        `Error. Action "${item.action}" at target ${item.target}:`,
+        error
+      );
     }
-
-    setOpen(false);
   };
 
   return (

@@ -19,7 +19,6 @@ app.use(cors({
     methods: ["GET"],
 }));
 app.use(express.json());
-// Route to get menu items
 app.get("/api/menu-items", async (_, res) => {
     try {
         const dataPath = path.join(process.cwd(), "api", "menu-items.json");
