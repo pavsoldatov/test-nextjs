@@ -1,11 +1,8 @@
 import { useCallback, useRef, useState } from "react";
 import { MpSdk, Rotation } from "../../public/bundle/sdk";
 import { useMatterport } from "@/context/MatterportContext";
-import {
-  buildGraph,
-  computeRotation,
-  getCurrentSweep,
-} from "@/lib/sweepNavigationUtils";
+import { computeRotation, getCurrentSweep } from "@/lib/sweepNavigationUtils";
+import { useSweepPath } from "./useSweepPath";
 
 export interface SweepNavigationOptions {
   transitionType?: MpSdk.Sweep.Transition;
@@ -23,21 +20,16 @@ export interface SweepNavigationOptions {
 
 export function useSweepNavigation() {
   const { sdk } = useMatterport();
+  const { currentPath, generatePath, clearPath } = useSweepPath();
   const [navigating, setNavigating] = useState(false);
   const navigationAbortRef = useRef(false);
 
-  /**
-   * Stops any active navigation between sweeps.
-   */
   const stopNavigation = useCallback(() => {
     if (navigating) {
       navigationAbortRef.current = true;
     }
   }, [navigating]);
 
-  /**
-   * Navigates sweep by sweep from the current position to a target sweep.
-   */
   const navigateToSweep = useCallback(
     async (targetSweepId: string, options: SweepNavigationOptions = {}) => {
       if (!sdk) {
@@ -58,62 +50,50 @@ export function useSweepNavigation() {
         } = options;
 
         const currentSweep = await getCurrentSweep(sdk);
-        const sweepGraph = await buildGraph(sdk, pathWeightExponent);
 
-        try {
-          const startSweep = sweepGraph.vertex(currentSweep.id);
-          const endSweep = sweepGraph.vertex(targetSweepId);
+        // Use the path generator
+        const path = await generatePath(
+          currentSweep.id,
+          targetSweepId,
+          pathWeightExponent
+        );
+        const visitedSweeps: string[] = [];
 
-          if (!startSweep || !endSweep) {
-            throw new Error("Start or end sweep not found in graph");
+        for (let i = 0; i < path.length; i++) {
+          if (navigationAbortRef.current) return visitedSweeps;
+          visitedSweeps.push(path[i].data.id);
+
+          const rotation = computeRotation(
+            i,
+            path,
+            rotationOffset,
+            finalRotation
+          );
+          await sdk.Sweep.moveTo(path[i].data.id, {
+            rotation,
+            transition: transitionType,
+            transitionTime,
+          });
+
+          if (i !== path.length - 1) {
+            await new Promise((resolve) => setTimeout(resolve, stepDelay));
           }
-
-          const aStarResult = sdk.Graph.createAStarRunner(
-            sweepGraph,
-            startSweep,
-            endSweep
-          ).exec();
-
-          if (aStarResult.status !== sdk.Graph.AStarStatus.SUCCESS) {
-            throw new Error(`Path finding failed: ${aStarResult.status}`);
-          }
-
-          const path = aStarResult.path;
-          const visitedSweeps: string[] = [];
-
-          for (let i = 0; i < path.length; i++) {
-            if (navigationAbortRef.current) return visitedSweeps;
-            visitedSweeps.push(path[i].data.id);
-
-            const rotation = computeRotation(
-              i,
-              path,
-              rotationOffset,
-              finalRotation
-            );
-            await sdk.Sweep.moveTo(path[i].data.id, {
-              rotation,
-              transition: transitionType,
-              transitionTime,
-            });
-
-            // Delay between sweeps (skip delay for the final one)
-            if (i !== path.length - 1) {
-              await new Promise((resolve) => setTimeout(resolve, stepDelay));
-            }
-          }
-
-          return visitedSweeps;
-        } finally {
-          sweepGraph.dispose();
         }
+
+        return visitedSweeps;
       } finally {
         setNavigating(false);
         navigationAbortRef.current = false;
       }
     },
-    [sdk]
+    [sdk, generatePath]
   );
 
-  return { navigateToSweep, navigating, stopNavigation };
+  return {
+    navigateToSweep,
+    navigating,
+    stopNavigation,
+    currentPath,
+    clearPath,
+  };
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState } from "react";
+import { FC, useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui";
 import { MenuItem, useMenuItems } from "@/hooks/useMenuItems";
 import { useMatterport } from "@/context/MatterportContext";
@@ -16,8 +16,13 @@ interface NavigationMenuProps {
 export const NavigationMenu: FC<NavigationMenuProps> = ({ className = "" }) => {
   const { sdk, isConnected } = useMatterport();
   const { menuItems, isLoading, error } = useMenuItems();
-  const { navigating, navigateToSweep, stopNavigation } = useSweepNavigation();
+  const { navigating, currentPath, navigateToSweep, stopNavigation } =
+    useSweepNavigation();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    console.log("path", currentPath);
+  }, [currentPath]);
 
   const handleMenuItemClick = async (item: MenuItem) => {
     setOpen(false);
