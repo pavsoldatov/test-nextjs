@@ -1,8 +1,8 @@
 "use client";
 
-import { FC, useEffect, useRef } from "react";
+import { FC, useEffect } from "react";
 import { useMatterport } from "@/context/MatterportContext";
-import { MpSdk, Vector3 } from "../../../../public/bundle/sdk";
+import { Vector3 } from "../../../../public/bundle/sdk";
 
 type HelmetProps = {
   url?: string;
@@ -23,14 +23,11 @@ export const Helmet: FC<HelmetProps> = ({
   visible = true,
 }) => {
   const { sdk, sceneObject } = useMatterport();
-  const nodeRef = useRef<MpSdk.Scene.INode | null>(null);
 
   useEffect(() => {
     if (!sdk?.Scene || !sceneObject) return;
 
     const helmetNode = sceneObject.addNode();
-    nodeRef.current = helmetNode;
-
     helmetNode?.addComponent(sdk.Scene.Component.GLTF_LOADER, {
       url,
       visible,

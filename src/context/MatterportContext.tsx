@@ -9,17 +9,17 @@ import {
   useEffect,
   useState,
 } from "react";
-import { MpSdk, Scene, ShowcaseBundleWindow } from "../../public/bundle/sdk";
+import { MpSdk, ShowcaseBundleWindow } from "../../public/bundle/sdk";
 
 type MatterportContextType = {
   sdk: MpSdk | null;
-  sceneObject: MpSdk.Scene.IObject | null;
+  // sceneObject: MpSdk.Scene.IObject | null;
   isConnected: boolean;
 };
 
 const MatterportContext = createContext<MatterportContextType>({
   sdk: null,
-  sceneObject: null,
+  // sceneObject: null,
   isConnected: false,
 });
 
@@ -30,7 +30,7 @@ export const MatterportProvider: FC<{
   iframeRef: RefObject<HTMLIFrameElement>;
 }> = ({ children, iframeRef }) => {
   const [sdk, setSdk] = useState<MpSdk | null>(null);
-  const [sceneObject, setSceneObject] = useState<Scene.IObject | null>(null);
+  // const [sceneObject, setSceneObject] = useState<Scene.IObject | null>(null);
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
@@ -68,18 +68,20 @@ export const MatterportProvider: FC<{
             }
           );
 
-          if (connectedSdk.Scene) {
-            const [newSceneObject] = await connectedSdk.Scene.createObjects(1);
-            setSceneObject(newSceneObject);
-            setIsConnected(true);
-          }
+          setIsConnected(true);
+
+          // if (connectedSdk.Scene) {
+          //   const [newSceneObject] = await connectedSdk.Scene.createObjects(1);
+          //   setSceneObject(newSceneObject);
+          //   setIsConnected(true);
+          // }
         })
         .catch((error) => console.error("SDK Connection error:", error));
     }
   }, [iframeRef, sdk]);
 
   return (
-    <MatterportContext.Provider value={{ sdk, sceneObject, isConnected }}>
+    <MatterportContext.Provider value={{ sdk, isConnected }}>
       {children}
     </MatterportContext.Provider>
   );
