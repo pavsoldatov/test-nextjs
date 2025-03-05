@@ -3,6 +3,7 @@
 import { FC, useEffect, useRef } from "react";
 import { useMatterport } from "@/context/MatterportContext";
 import { Color, MpSdk, Vector3 } from "../../../../public/bundle/sdk";
+
 type PointLightProps = {
   position: Vector3;
   color?: Color;
@@ -22,35 +23,54 @@ export const PointLight: FC<PointLightProps> = ({
   debug = false,
   enabled = true,
 }) => {
-  const { sdk, sceneObject } = useMatterport();
+  const { sdk } = useMatterport();
   const nodeRef = useRef<MpSdk.Scene.INode | null>(null);
+  const sceneObjectRef = useRef<MpSdk.Scene.IObject | null>(null);
 
   useEffect(() => {
-    if (!sdk?.Scene || !sceneObject) return;
+    if (!sdk?.Scene) return;
 
-    const lightNode = sceneObject.addNode();
-    nodeRef.current = lightNode;
+    const setupPointLight = async () => {
+      try {
+        const [sceneObject] = await sdk.Scene.createObjects(1);
+        sceneObjectRef.current = sceneObject;
 
-    lightNode?.addComponent(sdk.Scene.Component.POINT_LIGHT, {
-      enabled,
-      color,
-      position,
-      intensity,
-      distance,
-      decay,
-      debug,
-    });
-  }, [
-    sdk,
-    sceneObject,
-    position,
-    color,
-    intensity,
-    distance,
-    decay,
-    debug,
-    enabled,
-  ]);
+        const lightNode = sceneObject.addNode();
+        nodeRef.current = lightNode;
+
+        lightNode.addComponent(sdk.Scene.Component.POINT_LIGHT, {
+          enabled,
+          color,
+          position,
+          intensity,
+          distance,
+          decay,
+          debug,
+        });
+
+        lightNode.start();
+        sceneObject.start();
+
+        console.log("PointLight created successfully at", position);
+      } catch (error) {
+        console.error("Error setting up point light:", error);
+      }
+    };
+
+    setupPointLight();
+
+    return () => {
+      try {
+        nodeRef.current?.stop();
+        nodeRef.current = null;
+
+        sceneObjectRef.current?.stop();
+        sceneObjectRef.current = null;
+      } catch (e) {
+        console.error("Error during point light cleanup:", e);
+      }
+    };
+  }, [sdk, position, color, intensity, distance, decay, debug, enabled]);
 
   return null;
 };

@@ -21,24 +21,61 @@ export const DirectionalLight: FC<DirectionalLightProps> = ({
   debug = false,
   enabled = true,
 }) => {
-  const { sdk, sceneObject } = useMatterport();
+  const { sdk } = useMatterport();
   const nodeRef = useRef<MpSdk.Scene.INode | null>(null);
+  const sceneObjectRef = useRef<MpSdk.Scene.IObject | null>(null);
 
   useEffect(() => {
-    if (!sdk?.Scene || !sceneObject) return;
+    if (!sdk?.Scene) return;
 
-    const lightNode = sceneObject.addNode();
-    nodeRef.current = lightNode;
+    const setupDirectionalLight = async () => {
+      try {
+        // Create our own scene object
+        const [sceneObject] = await sdk.Scene.createObjects(1);
+        sceneObjectRef.current = sceneObject;
 
-    lightNode?.addComponent(sdk.Scene.Component.DIRECTIONAL_LIGHT, {
-      enabled,
-      color,
-      position,
-      target,
-      intensity,
-      debug,
-    });
-  }, [sdk, sceneObject, position, target, color, intensity, debug, enabled]);
+        // Create a node in our scene object
+        const lightNode = sceneObject.addNode();
+        nodeRef.current = lightNode;
+
+        // Add directional light component
+        lightNode.addComponent(sdk.Scene.Component.DIRECTIONAL_LIGHT, {
+          enabled,
+          color,
+          position,
+          target,
+          intensity,
+          debug,
+        });
+
+        lightNode.start();
+        sceneObject.start();
+
+        console.log(
+          "DirectionalLight created successfully from",
+          position,
+          "pointing to",
+          target
+        );
+      } catch (error) {
+        console.error("Error setting up directional light:", error);
+      }
+    };
+
+    setupDirectionalLight();
+
+    return () => {
+      try {
+        nodeRef.current?.stop();
+        nodeRef.current = null;
+
+        sceneObjectRef.current?.stop();
+        sceneObjectRef.current = null;
+      } catch (e) {
+        console.error("Error during directional light cleanup:", e);
+      }
+    };
+  }, [sdk, position, target, color, intensity, debug, enabled]);
 
   return null;
 };

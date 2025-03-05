@@ -1,8 +1,8 @@
 "use client";
 
-import { FC, useEffect } from "react";
+import { FC, useEffect, useRef } from "react";
 import { useMatterport } from "@/context/MatterportContext";
-import { Vector3 } from "../../../../public/bundle/sdk";
+import { MpSdk, Vector3 } from "../../../../public/bundle/sdk";
 
 type HelmetProps = {
   url?: string;
@@ -22,36 +22,70 @@ export const Helmet: FC<HelmetProps> = ({
   scale = 0.5,
   visible = true,
 }) => {
-  const { sdk, sceneObject } = useMatterport();
+  const { sdk } = useMatterport();
+  const nodeRef = useRef<MpSdk.Scene.INode | null>(null);
+  const sceneObjectRef = useRef<MpSdk.Scene.IObject | null>(null);
 
   useEffect(() => {
-    if (!sdk?.Scene || !sceneObject) return;
+    if (!sdk?.Scene) return;
 
-    const helmetNode = sceneObject.addNode();
-    helmetNode?.addComponent(sdk.Scene.Component.GLTF_LOADER, {
-      url,
-      visible,
-    });
+    const setupHelmet = async () => {
+      try {
+        const [sceneObject] = await sdk.Scene.createObjects(1);
+        sceneObjectRef.current = sceneObject;
 
-    // @ts-expect-error: ignoring `obj3D` type warnings,
-    // because it DOES exist on the node but the [MpSdk.Scene.INode]
-    // type declarations do not reflect that
-    helmetNode?.obj3D.position.set(position.x, position.y, position.z);
+        const helmetNode = sceneObject.addNode();
+        nodeRef.current = helmetNode;
 
-    // Set scale
-    if (typeof scale === "number") {
-      // @ts-expect-error: ignoring `obj3D` type warnings
-      helmetNode?.obj3D.scale.set(scale, scale, scale);
-    } else {
-      // @ts-expect-error: ignoring `obj3D` type warnings
-      helmetNode?.obj3D.scale.set(scale.x, scale.y, scale.z);
-    }
+        helmetNode.addComponent(sdk.Scene.Component.GLTF_LOADER, {
+          url,
+          visible,
+        });
 
-    if (lookAt) {
-      // @ts-expect-error: ignoring `obj3D` type warnings
-      helmetNode?.obj3D.lookAt(lookAt.x, lookAt.y, lookAt.z);
-    }
-  }, [sdk, sceneObject, url, position, lookAt, scale, visible]);
+        // @ts-expect-error: ignoring `obj3D` type warnings,
+        // because it DOES exist on the node but the [MpSdk.Scene.INode]
+        // type declarations do not reflect that
+        helmetNode.obj3D.position.set(position.x, position.y, position.z);
+
+        // Set scale
+        if (typeof scale === "number") {
+          // @ts-expect-error: ignoring `obj3D` type warnings
+          helmetNode.obj3D.scale.set(scale, scale, scale);
+        } else {
+          // @ts-expect-error: ignoring `obj3D` type warnings
+          helmetNode.obj3D.scale.set(scale.x, scale.y, scale.z);
+        }
+
+        if (lookAt) {
+          // @ts-expect-error: ignoring `obj3D` type warnings
+          helmetNode.obj3D.lookAt(lookAt.x, lookAt.y, lookAt.z);
+        }
+
+        // Start the node and scene object
+        helmetNode.start();
+        sceneObject.start();
+
+        console.log("Helmet created successfully");
+      } catch (error) {
+        console.error("Error setting up helmet:", error);
+      }
+    };
+
+    setupHelmet();
+
+    // Cleanup function
+    return () => {
+      try {
+        nodeRef.current?.stop();
+        nodeRef.current = null;
+
+        sceneObjectRef.current?.stop();
+        sceneObjectRef.current = null;
+      } catch (e) {
+        console.error("Error during helmet cleanup:", e);
+      }
+    };
+  }, [sdk, url, position, lookAt, scale, visible]);
 
   return null;
 };
