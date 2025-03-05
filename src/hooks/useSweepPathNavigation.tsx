@@ -18,9 +18,13 @@ export interface SweepNavigationOptions {
   finalRotation?: Rotation;
 }
 
-export function useSweepNavigation() {
+export function useSweepPathNavigation({
+  currentPath,
+  generatePath,
+  clearPath,
+}: ReturnType<typeof useSweepPath>) {
   const { sdk } = useMatterport();
-  const { currentPath, generatePath, clearPath } = useSweepPath();
+  // const { currentPath, generatePath, clearPath } = useSweepPath();
   const [navigating, setNavigating] = useState(false);
   const navigationAbortRef = useRef(false);
 
