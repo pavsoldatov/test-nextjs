@@ -1,13 +1,13 @@
 "use client";
 
 import { FC, useEffect, useState, useRef } from "react";
-import { Vector3 } from "../../public/bundle/sdk";
+import { Color, Vector3 } from "../../public/bundle/sdk";
 import { BlueSphere } from "./matterport/BlueSphere";
 
 type SphereData = {
   id: string;
   position: Vector3;
-  color: { r: number; g: number; b: number };
+  color: Color;
   scale: number;
   visible: boolean;
 };
@@ -16,84 +16,90 @@ interface DynamicBlueSpheresProps {
   basePosition: Vector3;
   count?: number;
   updateInterval?: number;
+  color?: Color;
+  scale?: number;
 }
 
 export const DynamicBlueSpheres: FC<DynamicBlueSpheresProps> = ({
   basePosition,
   count = 3,
   updateInterval = 2000,
+  color = { r: 0.2, g: 0.5, b: 1.0 },
+  scale = 0.2,
 }) => {
-  const [spherePool, setSpherePool] = useState<SphereData[]>([]);
-  const isInitializedRef = useRef(false);
+  const [spheres, setSpheres] = useState<SphereData[]>([]);
+  const initializedRef = useRef(false);
+  //TODO create blue spheres out of navpath
 
-  // Initialize sphere pool once
+  const propsRef = useRef({
+    basePosition,
+    count,
+    updateInterval,
+    color,
+    scale,
+  });
+
   useEffect(() => {
-    if (isInitializedRef.current) return;
+    propsRef.current = { basePosition, count, updateInterval, color, scale };
+  }, [basePosition, count, updateInterval, color, scale]);
+
+  useEffect(() => {
+    if (initializedRef.current) return;
+    initializedRef.current = true;
 
     console.log(`Initializing sphere pool with capacity: ${count}`);
 
-    const pool: SphereData[] = [];
+    const initialSpheres: SphereData[] = [];
     for (let i = 0; i < count; i++) {
-      pool.push({
+      initialSpheres.push({
         id: `fixed-sphere-${i}`,
         position: { ...basePosition },
-        color: { r: 0.2, g: 0.5, b: 1.0 },
-        scale: 0.2,
+        color: { ...color },
+        scale,
         visible: true,
       });
     }
 
-    setSpherePool(pool);
-    isInitializedRef.current = true;
+    setSpheres(initialSpheres);
+  }, []);
 
-    return () => {
-      console.log("DynamicBlueSpheres unmounted - clearing sphere pool");
-      isInitializedRef.current = false;
-    };
-  }, [count, basePosition]);
-
-  // Update sphere positions and properties on interval
   useEffect(() => {
-    if (spherePool.length === 0) return;
+    console.log("Setting up update interval");
 
-    console.log("Starting sphere update interval");
+    const updateSpheres = () => {
+      const { basePosition, color, scale } = propsRef.current;
 
-    // Initial update
-    updateSpheres();
-
-    // Set interval for updates
-    const intervalId = setInterval(updateSpheres, updateInterval);
-
-    function updateSpheres() {
-      console.log("Updating sphere positions and visibility");
-
-      setSpherePool((prevPool) => {
-        return prevPool.map((sphere) => {
-          // Generate new random properties
+      setSpheres((prevSpheres) =>
+        prevSpheres.map((sphere) => {
           const heightOffset = Math.random() * 1.5;
           return {
             ...sphere,
             position: {
               x: basePosition.x + (Math.random() - 0.5) * 0.5,
               y: basePosition.y + heightOffset,
-              z: basePosition.z,
+              z: basePosition.z + (Math.random() - 0.5) * 0.5,
             },
-            color: { r: 0.2, g: 0.5, b: 1.0 },
-            scale: 0.3,
+            color: { ...color },
+            scale,
             visible: true,
           };
-        });
-      });
-    }
+        })
+      );
+    };
+
+    updateSpheres();
+
+    const intervalId = setInterval(updateSpheres, updateInterval);
 
     return () => {
       clearInterval(intervalId);
+      console.log("Cleared update interval");
     };
-  }, [spherePool.length, basePosition, count, updateInterval]);
+  }, [updateInterval]);
 
   return (
     <>
-      {spherePool.map((sphere) => (
+      {spheres.map((sphere) => (
         <BlueSphere
           key={sphere.id}
           position={sphere.position}

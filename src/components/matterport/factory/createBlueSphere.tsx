@@ -32,7 +32,6 @@ export function createBlueSphereComponent(): MpSdk.Scene.IComponent {
       const THREE = this.context.three;
 
       try {
-        // Create geometry, material and mesh
         geometry = new THREE.SphereGeometry(1, 32, 32);
         material = new THREE.MeshBasicMaterial({
           color: new THREE.Color(

@@ -30,15 +30,12 @@ export const DirectionalLight: FC<DirectionalLightProps> = ({
 
     const setupDirectionalLight = async () => {
       try {
-        // Create our own scene object
         const [sceneObject] = await sdk.Scene.createObjects(1);
         sceneObjectRef.current = sceneObject;
 
-        // Create a node in our scene object
         const lightNode = sceneObject.addNode();
         nodeRef.current = lightNode;
 
-        // Add directional light component
         lightNode.addComponent(sdk.Scene.Component.DIRECTIONAL_LIGHT, {
           enabled,
           color,

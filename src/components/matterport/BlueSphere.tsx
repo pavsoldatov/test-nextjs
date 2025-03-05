@@ -51,7 +51,6 @@ export const BlueSphere: FC<BlueSphereProps> = ({
 
     setupBlueSphere();
 
-    // cleanup
     return () => {
       try {
         nodeRef.current?.stop();

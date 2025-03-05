@@ -1,8 +1,7 @@
 import { useCallback, useRef, useState } from "react";
-import { MpSdk, Rotation } from "../../public/bundle/sdk";
+import { Graph, MpSdk, Rotation, Sweep } from "../../public/bundle/sdk";
 import { useMatterport } from "@/context/MatterportContext";
 import { computeRotation, getCurrentSweep } from "@/lib/sweepNavigationUtils";
-import { useSweepPath } from "./useSweepPath";
 
 export interface SweepNavigationOptions {
   transitionType?: MpSdk.Sweep.Transition;
@@ -18,13 +17,18 @@ export interface SweepNavigationOptions {
   finalRotation?: Rotation;
 }
 
+interface UseSweepPathNavigationProps {
+  generatePath: (
+    startSweepId: string,
+    targetSweepId: string,
+    pathWeightExponent?: number
+  ) => Promise<Graph.Vertex<Sweep.ObservableSweepData>[]>;
+}
+
 export function useSweepPathNavigation({
-  currentPath,
   generatePath,
-  clearPath,
-}: ReturnType<typeof useSweepPath>) {
+}: UseSweepPathNavigationProps) {
   const { sdk } = useMatterport();
-  // const { currentPath, generatePath, clearPath } = useSweepPath();
   const [navigating, setNavigating] = useState(false);
   const navigationAbortRef = useRef(false);
 
@@ -97,7 +101,5 @@ export function useSweepPathNavigation({
     navigateToSweep,
     navigating,
     stopNavigation,
-    currentPath,
-    clearPath,
   };
 }

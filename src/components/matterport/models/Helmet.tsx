@@ -61,7 +61,6 @@ export const Helmet: FC<HelmetProps> = ({
           helmetNode.obj3D.lookAt(lookAt.x, lookAt.y, lookAt.z);
         }
 
-        // Start the node and scene object
         helmetNode.start();
         sceneObject.start();
 
@@ -73,7 +72,6 @@ export const Helmet: FC<HelmetProps> = ({
 
     setupHelmet();
 
-    // Cleanup function
     return () => {
       try {
         nodeRef.current?.stop();

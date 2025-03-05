@@ -3,11 +3,13 @@
 import { FC, useEffect, useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui";
 import { MenuItem, useMenuItems } from "@/hooks/useMenuItems";
+import { useSweepPath } from "@/hooks/useSweepPath";
+import { useSweepPathNavigation } from "@/hooks/useSweepPathNavigation";
 import { useMatterport } from "@/context/MatterportContext";
 import { MenuButton } from "./buttons/MenuButton";
 import { LocationsList } from "./LocationsList";
-import { useSweepNavigation } from "@/hooks/useSweepNavigation";
 import { StopButton } from "./buttons/StopButton";
+import { usePathStore } from "./store/pathStore";
 
 interface NavigationMenuProps {
   className?: string;
@@ -16,13 +18,28 @@ interface NavigationMenuProps {
 export const NavigationMenu: FC<NavigationMenuProps> = ({ className = "" }) => {
   const { sdk, isConnected } = useMatterport();
   const { menuItems, isLoading, error } = useMenuItems();
-  const { navigating, currentPath, navigateToSweep, stopNavigation } =
-    useSweepNavigation();
+  const {
+    currentPath: path,
+    isNavigating,
+    setPath,
+    setNavigating,
+  } = usePathStore();
+
+  const { currentPath, generatePath, clearPath } = useSweepPath();
+  const { navigating, navigateToSweep, stopNavigation } =
+    useSweepPathNavigation({ generatePath });
+
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    console.log("path", currentPath);
-  }, [currentPath]);
+    setPath(currentPath);
+    console.log("path state", path);
+  }, [currentPath, path, setPath]);
+
+  useEffect(() => {
+    setNavigating(navigating);
+    console.log("navigating state", isNavigating);
+  }, [clearPath, isNavigating, navigating, setNavigating]);
 
   const handleMenuItemClick = async (item: MenuItem) => {
     setOpen(false);
@@ -59,6 +76,7 @@ export const NavigationMenu: FC<NavigationMenuProps> = ({ className = "" }) => {
 
   const handleStopNavigation = () => {
     stopNavigation();
+    clearPath();
     setOpen(false);
   };
 
