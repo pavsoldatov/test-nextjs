@@ -19,12 +19,16 @@
     "id": "teleport-lobby",
     "label": "Teleport to Lobby",
     "action": "teleport",
-    "target": "Lobby"
+    "target": "Lobby",
+    "sweepId": "2sdesz1hz3s2rqi982bw4xuxd",
+    "cameraRotation": { "x": -17.983651384247715, "y": 172.48798113649048 }
   },
   {
     "id": "navigate-lobby",
     "label": "Navigate to Lobby",
     "action": "navigate",
-    "target": "Lobby"
+    "target": "Lobby",
+    "sweepId": "2sdesz1hz3s2rqi982bw4xuxd",
+    "cameraRotation": { "x": -17.983651384247715, "y": 172.48798113649048 }
   }
 ]

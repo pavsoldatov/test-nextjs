@@ -3,21 +3,23 @@ import { useMatterport } from "@/context/MatterportContext";
 import { Color, IDisposable, MpSdk, Vector3 } from "../../../public/bundle/sdk";
 import { createBlueSphereComponent } from "./factory/createBlueSphere";
 
-type BlueSphereProps = {
+export type BreadcrumbItemProps = {
+  id: string;
   position: Vector3;
   color?: Color;
   scale?: number;
   visible?: boolean;
 };
 
-export const BlueSphere: FC<BlueSphereProps> = ({
+export const BreadcrumbItem: FC<BreadcrumbItemProps> = ({
+  id,
   position,
   color = { r: 0.2, g: 0.5, b: 1.0 },
   scale = 0.2,
   visible = true,
 }) => {
   const { sdk } = useMatterport();
-  const componentName = "custom.blueSphere";
+  const componentName = `custom.blueSphere-${id}`;
   const nodeRef = useRef<MpSdk.Scene.INode | null>(null);
   const disposableRef = useRef<IDisposable | null>(null);
   const sceneObjectRef = useRef<MpSdk.Scene.IObject | null>(null);
@@ -35,15 +37,11 @@ export const BlueSphere: FC<BlueSphereProps> = ({
         const [sceneObject] = await sdk.Scene.createObjects(1);
         sceneObjectRef.current = sceneObject;
 
-        const node = sceneObject.addNode();
-        nodeRef.current = node;
-
-        node.position.set(position.x, position.y, position.z);
-
-        node.addComponent(componentName, { color, scale, visible });
-
-        node.start();
-        sceneObject.start();
+        nodeRef.current = sceneObjectRef.current.addNode();
+        nodeRef.current.position.set(position.x, position.y, position.z);
+        nodeRef.current.addComponent(componentName, { color, scale, visible });
+        nodeRef.current.start();
+        sceneObjectRef.current.start();
       } catch (error) {
         console.error("Error with BlueSphere:", error);
       }
@@ -53,19 +51,25 @@ export const BlueSphere: FC<BlueSphereProps> = ({
 
     return () => {
       try {
-        nodeRef.current?.stop();
-        nodeRef.current = null;
+        if (nodeRef.current) {
+          nodeRef.current.stop();
+          nodeRef.current = null;
+        }
 
-        sceneObjectRef.current?.stop();
-        sceneObjectRef.current = null;
+        if (sceneObjectRef.current) {
+          sceneObjectRef.current.stop();
+          sceneObjectRef.current = null;
+        }
 
-        disposableRef?.current?.dispose();
-        disposableRef.current = null;
+        if (disposableRef.current) {
+          disposableRef.current.dispose();
+          disposableRef.current = null;
+        }
       } catch (e) {
         console.error("Cleanup error:", e);
       }
     };
-  }, [sdk, position, color, scale, visible]);
+  }, [sdk, position, color, scale, visible, componentName]);
 
   return null;
 };

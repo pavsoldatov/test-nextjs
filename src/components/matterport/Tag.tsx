@@ -2,9 +2,9 @@
 
 import { FC, useEffect } from "react";
 import { useMatterport } from "@/context/MatterportContext";
-import { Color, Vector3 } from "../../../../public/bundle/sdk";
+import { Color, Vector3 } from "../../../public/bundle/sdk";
 
-type MatterportTagProps = {
+type TagProps = {
   label: string;
   description?: string;
   anchorPosition: Vector3;
@@ -13,7 +13,7 @@ type MatterportTagProps = {
   stemVisible?: boolean;
 };
 
-export const OfficeTag: FC<MatterportTagProps> = ({
+export const Tag: FC<TagProps> = ({
   label,
   description = "",
   anchorPosition,

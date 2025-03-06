@@ -1,36 +1,75 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js Project with Matterport SDK
+
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) that integrates with the Matterport SDK.
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js (recommended version: 18.x or higher)
+- npm, yarn, pnpm, or bun
+
+### Installation
+
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/your-project-name.git
+cd your-project-name
 ```
 
-Open [http://localhost:3001](http://localhost:3001) with your browser to see the result.
+2. Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Environment Setup
 
-## Learn More
+Create a `.env.local` file in the root directory with the following variables:
 
-To learn more about Next.js, take a look at the following resources:
+```
+PUBLIC_MATTERPORT_SDK_KEY=1234567sdk_key
+PUBLIC_MATTERPORT_MODEL_ID=model_id
+NEXT_PUBLIC_API_URL=http://localhost:3001
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Notes:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `PUBLIC_MATTERPORT_SDK_KEY`: Use the same SDK key provided for the test assignment
+- `PUBLIC_MATTERPORT_MODEL_ID`: The model ID (e.g., from the space URL: `?m=m72PGKzeknR`)
+- `NEXT_PUBLIC_API_URL`: URL where the server will run
 
-## Deploy on Vercel
+### Running the Development Server
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Start the development server which runs both the Express backend and the Next.js frontend:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run dev:all
+# or
+yarn dev:all
+# or
+pnpm dev:all
+# or
+bun dev:all
+```
+
+Once running, open [http://localhost:5002](http://localhost:5002) in your browser to see the application.
+
+## Project Structure
+
+- `/src`: Next.js frontend code
+- `/server`: Express backend code
+- `/api`: JSON data file used by the application (menu items)
+
+## Available Scripts
+
+- `dev:all`: Runs both the client and server in development mode
+- `dev:client`: Runs only the client in development mode
+- `dev:server`: Runs only the server in development mode

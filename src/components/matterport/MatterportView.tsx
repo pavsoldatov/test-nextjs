@@ -1,18 +1,16 @@
 "use client";
 
-import { FC, ReactNode, useRef } from "react";
+import { FC, ReactNode, useEffect, useRef } from "react";
 import { MatterportProvider } from "@/context/MatterportContext";
 import { Helmet } from "./models/Helmet";
 import { DirectionalLight, PointLight } from "./lights";
-import { OfficeTag } from "./tags/OfficeTag";
+import { Tag } from "./Tag";
 import { NavigationMenu } from "./NavigationMenu";
-import { DynamicBlueSpheres } from "../DynamicBlueSpheres";
-import { PathBreadcrumbs } from "./PathBreadcrumbs";
+import { Breadcrumbs } from "./Breadcrumbs";
 
 interface MatterportViewProps {
   sdkKey: string;
   modelId: string;
-  children?: ReactNode;
 }
 
 const MatterportView: FC<MatterportViewProps> = ({ sdkKey, modelId }) => {
@@ -29,7 +27,6 @@ const MatterportView: FC<MatterportViewProps> = ({ sdkKey, modelId }) => {
       />
 
       <MatterportProvider iframeRef={iframeRef}>
-        <NavigationMenu />
         <DirectionalLight
           position={{ x: 59.69252, y: 1.682085, z: -19.35396 }}
           target={{ x: 62.572, y: 1.6, z: -15.61 }}
@@ -46,26 +43,19 @@ const MatterportView: FC<MatterportViewProps> = ({ sdkKey, modelId }) => {
           lookAt={{ x: 57.89955, y: 1.65994, z: -13.69026 }}
           scale={0.5}
         />
-        
-        <DynamicBlueSpheres
-          basePosition={{
-            x: -14.708630561828613,
-            y: 1.0,
-            z: -4.43801212310791,
-          }}
-          scale={0.1}
-          updateInterval={2000}
-          count={2}
-        />
-
-        <OfficeTag
+        <Tag
           label="Office"
           description="This is an important tag representing an office room."
           anchorPosition={{ x: 58.9179, y: 0, z: -16.05324 }}
           stemVector={{ x: 0, y: 1.5, z: 0 }}
           color={{ r: 1, g: 0, b: 0 }}
         />
-
+        <NavigationMenu />
+        <Breadcrumbs
+          scale={0.1}
+          color={{ r: 0.2, g: 0.5, b: 1.0 }}
+          heightOffset={1}
+        />
       </MatterportProvider>
     </>
   );

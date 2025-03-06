@@ -1,12 +1,10 @@
 import { create } from "zustand";
-import { MpSdk } from "../../../../public/bundle/sdk";
+import { Graph, Sweep } from "../../../../public/bundle/sdk";
 
 interface PathState {
-  currentPath: MpSdk.Graph.Vertex<MpSdk.Sweep.ObservableSweepData>[];
+  currentPath: Graph.Vertex<Sweep.ObservableSweepData>[];
   isNavigating: boolean;
-  setPath: (
-    path: MpSdk.Graph.Vertex<MpSdk.Sweep.ObservableSweepData>[]
-  ) => void;
+  setPath: (path: Graph.Vertex<Sweep.ObservableSweepData>[]) => void;
   setNavigating: (isNavigating: boolean) => void;
 }
 

@@ -52,19 +52,6 @@ export const MatterportProvider: FC<{
             }
           });
 
-          connectedSdk.on(
-            connectedSdk.Sweep.Event.EXIT,
-            (oldSweepId, newSweepId) => {
-              //TODO Maybe loop over an array of sweep ids to find the position immediately on click
-              console.log(
-                "Moving from sweep:",
-                oldSweepId,
-                "to sweep:",
-                newSweepId
-              );
-            }
-          );
-
           setIsConnected(true);
         })
         .catch((error) => console.error("SDK Connection error:", error));

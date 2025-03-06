@@ -38,6 +38,7 @@ export const NavigationMenu: FC<NavigationMenuProps> = ({ className = "" }) => {
 
   useEffect(() => {
     setNavigating(navigating);
+    if (!navigating) clearPath();
     console.log("navigating state", isNavigating);
   }, [clearPath, isNavigating, navigating, setNavigating]);
 
