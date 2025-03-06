@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, ReactNode, useEffect, useRef } from "react";
+import { FC, useRef } from "react";
 import { MatterportProvider } from "@/context/MatterportContext";
 import { Helmet } from "./models/Helmet";
 import { DirectionalLight, PointLight } from "./lights";
