@@ -47,13 +47,6 @@ export const DirectionalLight: FC<DirectionalLightProps> = ({
 
         lightNode.start();
         sceneObject.start();
-
-        console.log(
-          "DirectionalLight created successfully from",
-          position,
-          "pointing to",
-          target
-        );
       } catch (error) {
         console.error("Error setting up directional light:", error);
       }

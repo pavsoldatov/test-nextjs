@@ -50,8 +50,6 @@ export const PointLight: FC<PointLightProps> = ({
 
         lightNode.start();
         sceneObject.start();
-
-        console.log("PointLight created successfully at", position);
       } catch (error) {
         console.error("Error setting up point light:", error);
       }

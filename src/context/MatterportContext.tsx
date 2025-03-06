@@ -39,19 +39,7 @@ export const MatterportProvider: FC<{
 
       embeddingWindow.MP_SDK.connect(embeddingWindow)
         .then(async (connectedSdk) => {
-          console.log("SDK Connected!");
           setSdk(connectedSdk);
-
-          connectedSdk.Sweep.current.subscribe((sweep) => {
-            if (sweep.id) {
-              console.log("Moved to sweep:", {
-                id: sweep.id,
-                position: sweep.position,
-                floorInfo: sweep.floorInfo,
-              });
-            }
-          });
-
           setIsConnected(true);
         })
         .catch((error) => console.error("SDK Connection error:", error));

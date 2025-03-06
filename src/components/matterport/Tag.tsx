@@ -41,7 +41,6 @@ export const Tag: FC<TagProps> = ({
       try {
         const [id] = await sdk.Tag.add(tagDescriptor);
         tagId = id;
-        console.log("Tag added with ID:", id);
       } catch (error) {
         console.error("Error adding tag:", error);
       }

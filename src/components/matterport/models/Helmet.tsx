@@ -64,7 +64,6 @@ export const Helmet: FC<HelmetProps> = ({
         helmetNode.start();
         sceneObject.start();
 
-        console.log("Helmet created successfully");
       } catch (error) {
         console.error("Error setting up helmet:", error);
       }

@@ -33,13 +33,13 @@ export const NavigationMenu: FC<NavigationMenuProps> = ({ className = "" }) => {
 
   useEffect(() => {
     setPath(currentPath);
-    console.log("path state", path);
   }, [currentPath, path, setPath]);
 
   useEffect(() => {
     setNavigating(navigating);
-    if (!navigating) clearPath();
-    console.log("navigating state", isNavigating);
+    if (!navigating) {
+      clearPath();
+    }
   }, [clearPath, isNavigating, navigating, setNavigating]);
 
   const handleMenuItemClick = async (item: MenuItem) => {
